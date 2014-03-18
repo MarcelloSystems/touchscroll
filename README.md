@@ -14,7 +14,7 @@ A standalone and jQuery plugin to handle NATIVE scroll on NATIVE types of mobile
 # What to be aware of
 **Attach touchscroll** to elements you are going to keep around through the cycle of your application. Backbone view elements is an example of that. If you are changing DOM content, attach the touchscroll to a higher order DOM element, even the body could have the touchscroll, and then use delegation instead.
 
-**Sizing scrollable areas** can be quite difficult. We recommend to use the CSS calc method. See examples below
+**Sizing scrollable areas** can be quite difficult. We recommend to use the CSS calc method. See examples below. We also recommend to use box-sizing: border-box, when adding borders and padding to elements that are part of the calculated areas. Also example below.
 
 # How to use
 
@@ -121,6 +121,64 @@ In this example it will be safe to empty the content of main and add a new list 
         
         });
     </script>
+  </body>
+</html>
+```
+
+### Sizing a scrollable area
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        html, body {
+          height: 100%;
+          margin: 0;
+        }
+        #header {
+          height: 100px;
+        }
+        .list {
+          height: calc(100% - 100px);
+        }
+    </style>
+  </head>
+  <body>
+    <div id="main">
+      <div id="header">Header</div>
+      <div class=".list"></div>
+    </div>
+  </body>
+</html>
+```
+
+### Handling border and padding
+In this example you can safely still use 100% -100px since both the border and the padding will be part of the headers total height.
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        html, body {
+          height: 100%;
+          margin: 0;
+        }
+        #header {
+          height: 100px;
+          border: 2px solid #000;
+          padding: 10px;
+          box-sizing: border-box;
+        }
+        .list {
+          height: calc(100% - 100px);
+        }
+    </style>
+  </head>
+  <body>
+    <div id="main">
+      <div id="header">Header</div>
+      <div class=".list"></div>
+    </div>
   </body>
 </html>
 ```
