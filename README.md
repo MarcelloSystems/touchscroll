@@ -18,6 +18,12 @@ A standalone and jQuery plugin to handle NATIVE scroll on NATIVE types of mobile
 
 # How to use
 
+**jQuery**: $('#myEl').touchscroll(ARGS);
+
+**normal**: touchscroll(document.getElementById('myEl'), ARGS);
+
+*Examples will be with jQuery.*
+
 ### Add script. Be sure to add it after jQuery, if you want to use jQuery
 ```html
 <!DOCTYPE html>
