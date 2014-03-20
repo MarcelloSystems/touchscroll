@@ -1,7 +1,8 @@
 /* global console */
-/* touchscroll v.{{ VERSION }} */
+/*! {{ BANNER }} */
 
-if ( typeof DEBUG === 'undefined' ) DEBUG = true;
+// Flag used for conditional compilation with uglifyJS
+if (typeof DEBUG === 'undefined') DEBUG = true;
 
 (function () {
     "use strict";
@@ -24,85 +25,164 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
     ///////////////////////////////////////////////////////
     // PRIVATES
 
-    var p = {
-        scrollTop: 0,
-        touchstart: {
+
+    var scrollTop = 0,
+        touchstart = {
             x: 0,
             y: 0
         },
-        scrollContainer: {
+        scrollContainer = {
             scrollHeight: 0,
             offsetHeight: 0
         },
-        isScrolling: false,
-        reset: null,
-        disabled: false,
-        disableTouch: function () {
-            p.disabled = true;
-        },
-        enableTouch: function () {
-            p.disabled = false;
-        },
+        isScrolling = false,
+        reset = null,
+        disabled = false;
 
-        // Returns true/false based on whether el has the given class/id
-        // Selector is eg: ".myClass" or "#myId"
-        isSelector: function (el, selector) {
-            if (!el || typeof selector !== 'string') {
-                return false;
-            }
-            selector = selector.replace(/\s*/g, ''); // Remove whitespace before matching
-            return selector === '.' + el.className || selector === '#' + el.id;
-        },
 
-        isEventTarget: function (el, events) {
-            for (var prop in events) {
-                if (events.hasOwnProperty(prop) && p.isSelector(el, prop)) {
-                    return true;
-                }
-            }
+    function disableTouch() {
+        disabled = true;
+    }
+
+    function enableTouch() {
+        disabled = false;
+    }
+
+    // Returns true/false based on whether el has the given class/id
+    // Selector is eg: ".myClass" or "#myId"
+    function isSelector(el, selector) {
+        if (!el || typeof selector !== 'string') {
             return false;
-        },
-        getTarget: function (el, selector) {
-            var target = el;
+        }
+        selector = selector.replace(/\s*/g, ''); // Remove whitespace before matching
+        return selector === '.' + el.className || selector === '#' + el.id;
+    }
+
+    function isEventTarget(el, events) {
+        for (var prop in events) {
+            if (events.hasOwnProperty(prop) && isSelector(el, prop)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function getTarget(el, selector) {
+        var target = el;
+        while (target.parentNode) {
+            if (isSelector(target, selector)) {
+                return target;
+            } else {
+                target = target.parentNode;
+            }
+        }
+    }
+
+    // When scrolltouch('.list', {}); we have to identify
+    // if .list has been hit. This is done by checking
+    // the target and its parentNodes for a hit
+    function createDelegatedClosure(selector, cb) {
+        return function (event) {
+            var target = getTarget(event.target, selector);
+
+            if (target) {
+                return cb(event, target);
+            }
+        };
+    }
+
+    function createEventsClosure(events, cb) {
+        return function (event) {
+            var target = event.target;
             while (target.parentNode) {
-                if (p.isSelector(target, selector)) {
-                    return target;
+                if (isEventTarget(target, events)) {
+                    return cb(event, '.' + target.className); // TODO: Fix better identifier
                 } else {
                     target = target.parentNode;
                 }
             }
-        },
-        // When scrolltouch('.list', {}); we have to identify
-        // if .list has been hit. This is done by checking
-        // the target and its parentNodes for a hit
-        createDelegatedClosure: function (selector, cb) {
-            return function (event) {
-                var target = p.getTarget(event.target, selector);
+        };
+    }
 
-                if (target) {
-                    return cb(event, target);
-                }
-            };
-        },
-        createEventsClosure: function (events, cb) {
-            return function (event) {
-                var target = event.target;
-                while (target.parentNode) {
-                    if (p.isEventTarget(target, events)) {
-                        return cb(event, '.' + target.className); // TODO: Fix better identifier
-                    } else {
-                        target = target.parentNode;
-                    }
-                }
-            };
-        }
-    };
+//    var p = {
+//        scrollTop: 0,
+//        touchstart: {
+//            x: 0,
+//            y: 0
+//        },
+//        scrollContainer: {
+//            scrollHeight: 0,
+//            offsetHeight: 0
+//        },
+//        isScrolling: false,
+//        reset: null,
+//        disabled: false,
+//        disableTouch: function () {
+//            disabled = true;
+//        },
+//        enableTouch: function () {
+//            disabled = false;
+//        },
+
+        // Returns true/false based on whether el has the given class/id
+        // Selector is eg: ".myClass" or "#myId"
+//        isSelector: function (el, selector) {
+//            if (!el || typeof selector !== 'string') {
+//                return false;
+//            }
+//            selector = selector.replace(/\s*/g, ''); // Remove whitespace before matching
+//            return selector === '.' + el.className || selector === '#' + el.id;
+//        },
+
+//        isEventTarget: function (el, events) {
+//            for (var prop in events) {
+//                if (events.hasOwnProperty(prop) && isSelector(el, prop)) {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        },
+//        getTarget: function (el, selector) {
+//            var target = el;
+//            while (target.parentNode) {
+//                if (isSelector(target, selector)) {
+//                    return target;
+//                } else {
+//                    target = target.parentNode;
+//                }
+//            }
+//        },
+//        // When scrolltouch('.list', {}); we have to identify
+//        // if .list has been hit. This is done by checking
+//        // the target and its parentNodes for a hit
+//        createDelegatedClosure: function (selector, cb) {
+//            return function (event) {
+//                var target = getTarget(event.target, selector);
+//
+//                if (target) {
+//                    return cb(event, target);
+//                }
+//            };
+//        },
+//        createEventsClosure: function (events, cb) {
+//            return function (event) {
+//                var target = event.target;
+//                while (target.parentNode) {
+//                    if (isEventTarget(target, events)) {
+//                        return cb(event, '.' + target.className); // TODO: Fix better identifier
+//                    } else {
+//                        target = target.parentNode;
+//                    }
+//                }
+//            };
+//        }
+//    };
 
 
     ///////////////////////////////////////////////////////
     // PUBLIC
 
-    var touchscroll = function () {
+    var touchscroll = function (arg0, arg1, arg2) {
 
         var el,
             events,
@@ -116,17 +196,17 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
 
         if (jQuery) {
             el = this[0];
-            parentSelector = typeof arguments[0] === 'string' ? arguments[0] : null;
-            events = parentSelector ? arguments[1] : arguments[0];
+            parentSelector = typeof arg0 === 'string' ? arg0 : null;
+            events = parentSelector ? arg1 : arg0;
         } else {
-            el = arguments[0];
-            parentSelector = typeof arguments[1] === 'string' ? arguments[1] : null;
-            events = parentSelector ? arguments[2] : arguments[1];
+            el = arg0;
+            parentSelector = typeof arg1 === 'string' ? arg1 : null;
+            events = parentSelector ? arg2 : arg1;
         }
 
 
-        if (typeof arguments[0] === 'boolean') {
-            return arguments[0] ? p.enableTouch() : p.disableTouch();
+        if (typeof arg0 === 'boolean') {
+            return arg0 ? enableTouch() : disableTouch();
         }
 
         if (parentSelector) {
@@ -150,13 +230,13 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
         touchstart = function (event, target) {
 
             target = target ? target : event.currentTarget;
-            p.scrollTop = target.scrollTop;
-            p.touchstart = {
+            scrollTop = target.scrollTop;
+            touchstart = {
                 x: event.touches[0].pageX,
                 y: event.touches[0].pageY
 
             };
-            p.scrollContainer = {
+            scrollContainer = {
                 scrollHeight: target.scrollHeight,
                 offsetHeight: target.offsetHeight
             };
@@ -164,7 +244,7 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
         };
 
         if (parentSelector) {
-            startCallback = p.createDelegatedClosure(parentSelector, touchstart);
+            startCallback = createDelegatedClosure(parentSelector, touchstart);
         } else {
             startCallback = touchstart;
         }
@@ -175,17 +255,17 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
 
         touchmove = function (event) {
 
-            p.isScrolling = true;
+            isScrolling = true;
 
             // Prevent horizontal scroll
-            if (Math.abs(p.touchstart.x - event.touches[0].pageX) > 10) {
+            if (Math.abs(touchstart.x - event.touches[0].pageX) > 10) {
                 event[preventDefault]();
             }
 
-            if (p.scrollTop === 0 && event.touches[0].pageY > p.touchstart.y) {
+            if (scrollTop === 0 && event.touches[0].pageY > touchstart.y) {
                 event[preventDefault]();
-            } else if (p.scrollTop === (p.scrollContainer.scrollHeight - p.scrollContainer.offsetHeight) &&
-                event.touches[0].pageY < p.touchstart.y) {
+            } else if (scrollTop === (scrollContainer.scrollHeight - scrollContainer.offsetHeight) &&
+                event.touches[0].pageY < touchstart.y) {
 
                 event[preventDefault]();
             }
@@ -194,7 +274,7 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
         };
 
         if (parentSelector) {
-            moveCallback = p.createDelegatedClosure(parentSelector, touchmove);
+            moveCallback = createDelegatedClosure(parentSelector, touchmove);
         } else {
             moveCallback = touchmove;
         }
@@ -208,23 +288,23 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
         touchend = function (event, touchendTarget) {
 
 
-            if (p.isScrolling && !p.reset) {
+            if (isScrolling && !reset) {
                 // To allow multiple touchend events to trigger
-                return p.reset = setTimeout(function () {  //TODO: JSHint is not happy about this one. Split?
-                    p.isScrolling = false;
-                    p.reset = null;
+                return reset = setTimeout(function () {  //TODO: JSHint is not happy about this one. Split?
+                    isScrolling = false;
+                    reset = null;
                 }, 0);
             }
 
-            if (!p.isScrolling && !p.disabled && touchendTarget) {
+            if (!isScrolling && !disabled && touchendTarget) {
                 events[touchendTarget](event, touchendTarget);
             }
         };
 
         if (parentSelector) {
-            endCallback = p.createDelegatedClosure(parentSelector, p.createEventsClosure(events, touchend));
+            endCallback = createDelegatedClosure(parentSelector, createEventsClosure(events, touchend));
         } else {
-            endCallback = p.createEventsClosure(events, touchend);
+            endCallback = createEventsClosure(events, touchend);
         }
 
         el[addEventListener]('touchend', endCallback);
@@ -232,11 +312,11 @@ if ( typeof DEBUG === 'undefined' ) DEBUG = true;
     };
 
 
-if (DEBUG) {
-    touchscroll._peek = function (string) {
-        return eval(string);
-    };
-}
+    if (DEBUG) {
+        touchscroll._peek = function (string) {
+            return eval(string);
+        };
+    }
 
     // Expose to environment
     if (jQuery) {

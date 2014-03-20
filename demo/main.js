@@ -1,5 +1,3 @@
-console.log('Hi from main');
-
 
 
 $('#sidebar').touchscroll();
