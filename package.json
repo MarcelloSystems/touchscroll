@@ -1,0 +1,31 @@
+{
+  "name": "touchscroll",
+  "version": "0.0.1",
+  "description": "A standalone and jQuery plugin to handle NATIVE scroll on NATIVE types of mobile web applications",
+  "main": "Gruntfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-tdd": "~0.1.8",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-string-replace": "^0.2.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/MarcelloSystems/touchscroll.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarcelloSystems/touchscroll/issues"
+  },
+  "homepage": "https://github.com/MarcelloSystems/touchscroll"
+}

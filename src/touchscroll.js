@@ -1,14 +1,29 @@
+/* global console */
+/* touchscroll v.{{ VERSION }} */
+
+if ( typeof DEBUG === 'undefined' ) DEBUG = true;
+
 (function () {
+    "use strict";
+
+    var jQuery = window.jQuery || null,
+
+    // A few tricks for better minification
+        preventDefault = 'preventDefault',
+        addEventListener = 'addEventListener';
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log('Y=');
-        document.body.addEventListener('touchmove', function (event) {
-            event.preventDefault();
+    document[addEventListener]('DOMContentLoaded', function () {
+//        console.log('Y=');
+        document.body[addEventListener]('touchmove', function (event) {
+            event[preventDefault]();
         });
     });
 
-    var jQuery = window.jQuery || null;
+
+    ///////////////////////////////////////////////////////
+    // PRIVATES
+
     var p = {
         scrollTop: 0,
         touchstart: {
@@ -28,13 +43,17 @@
         enableTouch: function () {
             p.disabled = false;
         },
-        // TODO: Morten has to write an identifier
+
+        // Returns true/false based on whether el has the given class/id
+        // Selector is eg: ".myClass" or "#myId"
         isSelector: function (el, selector) {
-            selector = selector.split('.');
-            selector = selector[selector.length - 1];
-            console.log(selector, el);
-            return el.className === selector;
+            if (!el || typeof selector !== 'string') {
+                return false;
+            }
+            selector = selector.replace(/\s*/g, ''); // Remove whitespace before matching
+            return selector === '.' + el.className || selector === '#' + el.id;
         },
+
         isEventTarget: function (el, events) {
             for (var prop in events) {
                 if (events.hasOwnProperty(prop) && p.isSelector(el, prop)) {
@@ -63,7 +82,7 @@
                 if (target) {
                     return cb(event, target);
                 }
-            }
+            };
         },
         createEventsClosure: function (events, cb) {
             return function (event) {
@@ -75,9 +94,13 @@
                         target = target.parentNode;
                     }
                 }
-            }
+            };
         }
     };
+
+
+    ///////////////////////////////////////////////////////
+    // PUBLIC
 
     var touchscroll = function () {
 
@@ -136,7 +159,7 @@
             p.scrollContainer = {
                 scrollHeight: target.scrollHeight,
                 offsetHeight: target.offsetHeight
-            }
+            };
             event.stopPropagation();
         };
 
@@ -146,7 +169,7 @@
             startCallback = touchstart;
         }
 
-        el.addEventListener('touchstart', startCallback);
+        el[addEventListener]('touchstart', startCallback);
 
         // TOUCHMOVE
 
@@ -156,15 +179,15 @@
 
             // Prevent horizontal scroll
             if (Math.abs(p.touchstart.x - event.touches[0].pageX) > 10) {
-                event.preventDefault();
+                event[preventDefault]();
             }
 
             if (p.scrollTop === 0 && event.touches[0].pageY > p.touchstart.y) {
-                event.preventDefault();
+                event[preventDefault]();
             } else if (p.scrollTop === (p.scrollContainer.scrollHeight - p.scrollContainer.offsetHeight) &&
                 event.touches[0].pageY < p.touchstart.y) {
 
-                event.preventDefault();
+                event[preventDefault]();
             }
 
             event.stopPropagation();
@@ -176,7 +199,7 @@
             moveCallback = touchmove;
         }
 
-        el.addEventListener('touchmove', moveCallback);
+        el[addEventListener]('touchmove', moveCallback);
 
         if (!events) {
             return;
@@ -187,7 +210,7 @@
 
             if (p.isScrolling && !p.reset) {
                 // To allow multiple touchend events to trigger
-                return p.reset = setTimeout(function () {
+                return p.reset = setTimeout(function () {  //TODO: JSHint is not happy about this one. Split?
                     p.isScrolling = false;
                     p.reset = null;
                 }, 0);
@@ -204,10 +227,18 @@
             endCallback = p.createEventsClosure(events, touchend);
         }
 
-        el.addEventListener('touchend', endCallback);
+        el[addEventListener]('touchend', endCallback);
 
     };
 
+
+if (DEBUG) {
+    touchscroll._peek = function (string) {
+        return eval(string);
+    };
+}
+
+    // Expose to environment
     if (jQuery) {
         jQuery.fn.touchscroll = touchscroll;
     } else {

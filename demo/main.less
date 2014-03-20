@@ -1,0 +1,44 @@
+@topbarHeight: 40px;
+@bottom: 25%;
+
+.pretty() {
+  padding: 15px;
+}
+
+.boxSixing() {
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box; /* Firefox, other Gecko */
+  box-sizing: border-box;
+}
+
+.absoluteColumn(@left: 0, @width: 20%) {
+  position: absolute;
+  top: @topbarHeight;
+  bottom: @bottom;
+  left: @left;
+  width: @width;
+}
+
+
+#sidebar {
+  .pretty;
+  .boxSixing;
+  .absoluteColumn(0, 20%);
+  background-color: gold;
+}
+
+
+.content {
+  .pretty;
+  .boxSixing;
+  .absoluteColumn(80%, 20%);
+  background-color: lightgoldenrodyellow;
+}
+
+
+#rightbar {
+  .pretty;
+  .boxSixing;
+  .absoluteColumn(20%, 60%);
+  background-color: palegoldenrod;
+}
