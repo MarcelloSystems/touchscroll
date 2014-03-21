@@ -132,6 +132,7 @@ In this example it will be safe to empty the content of main and add a new list 
 ```
 
 ### Sizing a scrollable area
+Note that if you are using LESS, it will compile the calculations in the calc method, which means the final output will be "calc(0)" in this case. To avoid LESS to do the calculation, you can escape it like this: "height: ~"calc(100% - 100px)";
 ```html
 <!DOCTYPE html>
 <html>
