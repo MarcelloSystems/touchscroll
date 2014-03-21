@@ -159,7 +159,7 @@ In this example it will be safe to empty the content of main and add a new list 
 ```
 
 ### Handling border and padding
-In this example you can safely still use 100% -100px since both the border and the padding will be part of the headers total height.
+In this example we use the css property "box-sizing: border-box" to safely still use 100% -100px since both the border and the padding will be part of the headers total height.
 ```html
 <!DOCTYPE html>
 <html>
