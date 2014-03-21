@@ -23,9 +23,9 @@
     "url": "git://github.com/MarcelloSystems/touchscroll.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/MarcelloSystems/touchscroll/issues"
   },
-  "homepage": "https://github.com/MarcelloSystems/touchscroll"
+  "homepage": "https://marcello.no"
 }

@@ -1,5 +1,5 @@
 /* global console */
-/*! {{ BANNER }} */
+/*! touchscroll v0.0.1 2014-03-21 07:41 */
 
 
 if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional compilation with uglifyJS

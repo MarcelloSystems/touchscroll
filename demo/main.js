@@ -1,7 +1,5 @@
 
-
+// Test touchscroll on three elements
 $('#sidebar').touchscroll();
-$('body').touchscroll('.content');
 $('#rightbar').touchscroll();
-
-//touchscroll('#sidebar')
+$('#content-container').touchscroll('.content');

@@ -1,5 +1,10 @@
 @topbarHeight: 40px;
-@bottom: 25%;
+@footerHeight: 25%;
+
+//html, body{
+//  height: 100%;
+//}
+
 
 .pretty() {
   padding: 15px;
@@ -14,7 +19,7 @@
 .absoluteColumn(@left: 0, @width: 20%) {
   position: absolute;
   top: @topbarHeight;
-  bottom: @bottom;
+  bottom: @footerHeight;
   left: @left;
   width: @width;
 }
@@ -31,14 +36,14 @@
 .content {
   .pretty;
   .boxSixing;
-  .absoluteColumn(80%, 20%);
-  background-color: lightgoldenrodyellow;
+  .absoluteColumn(20%, 60%);
+  background-color: palegoldenrod;
 }
 
 
 #rightbar {
   .pretty;
   .boxSixing;
-  .absoluteColumn(20%, 60%);
-  background-color: palegoldenrod;
+  .absoluteColumn(80%, 20%);
+  background-color: lightgoldenrodyellow;
 }

@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             min: {
                 options: {
                     banner: '/*! <%= banner %> */',
-                    sourceMap: true,
+//                    sourceMap: true,
                     compress: {
                         drop_console: true,
                         global_defs: { // Conditional compilation. Removes test/debug blocks

@@ -2,11 +2,12 @@
 (function () {
     "use strict";
 
+    // Access closure
+    var peek = touchscroll._peek,
 
-//    var p = touchscroll._privates;
-//    var p = touchscroll._peek("p"),
+        // Test/inspection subjects
+        isSelector = peek("isSelector");
 
-    var isSelector = touchscroll._peek("isSelector");
 
     buster.testCase('touchscroll', {
 //        setUp: function () {
@@ -19,7 +20,7 @@
             expect(touchscroll).to.have.length(3);
         },
         'PRIVATES': {
-            'isSelector': {
+            'isSelector()': {
                 'setUp': function () {
                     this.el = document.createElement('div');
                     this.el.className = "myClass";
@@ -28,7 +29,7 @@
                 'is a function': function () {
                     expect(isSelector).to.be.a('function');
                 },
-                'takes two arguments (dom element, selector string)': function() {
+                'takes two arguments (dom element, selector string)': function () {
                     expect(isSelector).to.have.length(2);
                 },
                 'returns a boolean': function () {
@@ -46,10 +47,10 @@
                 "returns false when el doesn't have given id": function () {
                     expect(isSelector(this.el, '#hasNoId')).to.be(false);
                 },
-                'returns false if el is falsy': function() {
+                'returns false if el is falsy': function () {
                     expect(isSelector(null, '.foo')).to.be(false);
                 },
-                'returns false if selector is not a string': function() {
+                'returns false if selector is not a string': function () {
                     expect(isSelector(this.el, null)).to.be(false);
                 },
                 'ignores whitespace in selector string': function () {
