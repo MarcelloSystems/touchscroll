@@ -11,13 +11,27 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
 
     // A few tricks for better minification
         preventDefault = 'preventDefault',
-        addEventListener = 'addEventListener';
+        addEventListener = 'addEventListener',
+        isWindowsPhone = navigator.msPointerEnabled;
+
+    // Handling touch events for cross devices. WP has their own touch events.
+
+    var touchstartEvent = 'touchstart',
+        touchendEvent = 'touchend',
+        touchmoveEvent = 'touchmove';
+
+    if (isWindowsPhone) {
+        touchstartEvent = 'MSPointerDown';
+        touchendEvent = 'MSPointerUp';
+        touchmoveEvent = 'MSPointerMove';
+    }
+
 
 
     // Avoid rubber band effect in body
     document[addEventListener]('DOMContentLoaded', function () {
         console.log("DOMContentLoaded");
-        window[addEventListener]('touchmove', function (event) {
+        window[addEventListener](touchmoveEvent, function (event) {
             console.log("preventDefault of touchmove on body");
             event[preventDefault]();
         });
@@ -178,7 +192,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             startCallback = touchstart;
         }
 
-        el[addEventListener]('touchstart', startCallback);
+        el[addEventListener](touchstartEvent, startCallback);
 
         // TOUCHMOVE
 
@@ -208,7 +222,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             moveCallback = touchmove;
         }
 
-        el[addEventListener]('touchmove', moveCallback);
+        el[addEventListener](touchmoveEvent, moveCallback);
 
         if (!events) {
             return;
@@ -236,7 +250,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             endCallback = createEventsClosure(events, touchend);
         }
 
-        el[addEventListener]('touchend', endCallback);
+        el[addEventListener](touchendEvent, endCallback);
 
         return touchscroll;
 
