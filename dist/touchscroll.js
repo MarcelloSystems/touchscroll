@@ -1,5 +1,5 @@
 /* global console */
-/*! touchscroll v0.0.1 2014-03-21 07:47 */
+/*! touchscroll v0.0.1 2014-03-21 12:13 */
 
 
 if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional compilation with uglifyJS
@@ -236,6 +236,8 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
 
         el[addEventListener]('touchend', endCallback);
 
+        return touchscroll;
+
     };
 
 
@@ -249,7 +251,17 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
     // Expose to environment
     if (jQuery) {
         jQuery.fn.touchscroll = touchscroll;
-    } else {
+    } else if ('define' in window) {
+        window.define('jQuery', function (jQuery) {
+            jQuery = jQuery || window.jQuery;
+            if (jQuery) {
+                jQuery.fn.touchscroll = touchscroll;
+            } else {
+                return touchscroll;
+            }
+        });
+     } else {
+
         window.touchscroll = touchscroll;
     }
 
