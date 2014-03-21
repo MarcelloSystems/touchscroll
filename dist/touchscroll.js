@@ -1,5 +1,5 @@
 /* global console */
-/*! touchscroll v0.0.1 2014-03-21 12:13 */
+/*! touchscroll v0.0.1 2014-03-21 12:38 */
 
 
 if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional compilation with uglifyJS
@@ -63,7 +63,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
     function isEventTarget(el, events) {
         for (var prop in events) {
             if (events.hasOwnProperty(prop) && isSelector(el, prop)) {
-                return true;
+                return prop;
             }
         }
         return false;
@@ -95,10 +95,12 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
 
     function createEventsClosure(events, cb) {
         return function (event) {
-            var target = event.target;
+            var target = event.target,
+                selector;
             while (target.parentNode) {
-                if (isEventTarget(target, events)) {
-                    return cb(event, '.' + target.className); // TODO: Fix better identifier
+                selector = isEventTarget(target, events);
+                if (selector) {
+                    return cb(event, selector, target); // TODO: Fix better identifier
                 } else {
                     target = target.parentNode;
                 }
@@ -212,7 +214,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             return;
         }
 
-        touchend = function (event, touchendTarget) {
+        touchend = function (event, touchendTarget, target) {
 
 
             if (isScrolling && !reset) {
@@ -224,7 +226,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             }
 
             if (!isScrolling && !disabled && touchendTarget) {
-                events[touchendTarget](event, touchendTarget);
+                events[touchendTarget](event, target);
             }
         };
 
@@ -260,10 +262,9 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
                 return touchscroll;
             }
         });
-     } else {
+    } else {
 
         window.touchscroll = touchscroll;
     }
 
 }());
-
