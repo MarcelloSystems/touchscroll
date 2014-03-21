@@ -201,3 +201,19 @@ In this example we use the css property "box-sizing: border-box" to safely still
   user-select: none;
 }
 ```
+
+## META tags to display content correctly
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, user-scalable=0, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+  </head>
+  <body>
+  
+  </body>
+</html>
+```
