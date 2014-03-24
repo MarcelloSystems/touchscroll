@@ -159,6 +159,8 @@ Note that if you are using LESS, it will compile the calculations in the calc me
 </html>
 ```
 
+> Never use border or padding on scroll elements themselves. Do that in a wrapper. This has to do with calculations of the scroll.
+
 ### Handling border and padding
 In this example we use the css property "box-sizing: border-box" to safely still use 100% -100px since both the border and the padding will be part of the headers total height.
 ```html
