@@ -70,8 +70,8 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
         if (!el || typeof selector !== 'string') {
             return false;
         }
-        selector = selector.replace(/\s*/g, ''); // Remove whitespace before matching
-        return selector === '.' + el.className || selector === '#' + el.id;
+        selector = selector.replace(/[\s,\.]*/g, ''); // Remove whitespace and class dots before matching
+        return el.className.split(' ').indexOf(selector) >= 0 || selector === '#' + el.id;
     }
 
     function isEventTarget(el, events) {
@@ -272,6 +272,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             jQuery = jQuery || window.jQuery;
             if (jQuery) {
                 jQuery.fn.touchscroll = touchscroll;
+                jQuery = $;
             } else {
                 return touchscroll;
             }
