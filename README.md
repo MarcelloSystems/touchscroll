@@ -37,6 +37,33 @@ A standalone and jQuery plugin to handle NATIVE scroll on NATIVE types of mobile
 </html>
 ```
 
+### The DOM structure
+The scroller needs two elements. A wrapper and the element that is the list. This is a typical DOM structure, with
+css:
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      #wrapper {
+        height: 100%; /* Locks the wrapper to 100% height of body */
+        overflow: hidden; /* Makes sure the list element is hidden inside wrapper */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div class="#list"></div>
+    </div>
+  </body>
+</html>
+```
+
 ### Attach scroll to a DOM node directly
 This will make the content of the DIV natively scrollable
 ```html
@@ -45,11 +72,13 @@ This will make the content of the DIV natively scrollable
   <head>
   </head>
   <body>
-    <div id="main"></div>
+    <div id="wrapper">
+      <div class="#list"></div> 
+    </div>
     <script src="jquery.js"></script>
     <script src="touchscroll.js"></script>
     <script>
-      $('#main').touchscroll();
+      $('#list').touchscroll();
     </script>
   </body>
 </html>
@@ -62,13 +91,13 @@ In this example it will be safe to empty the content of main and add a new list 
   <head>
   </head>
   <body>
-    <div id="main">
+    <div id="wrapper">
       <div class=".list"></div>
     </div>
     <script src="jquery.js"></script>
     <script src="touchscroll.js"></script>
     <script>
-      $('#main').touchscroll('.list');
+      $('#wrapper').touchscroll('.list');
     </script>
   </body>
 </html>
@@ -81,7 +110,7 @@ In this example it will be safe to empty the content of main and add a new list 
   <head>
   </head>
   <body>
-    <div id="main">
+    <div id="wrapper">
       <div class=".list"></div>
     </div>
     <script src="jquery.js"></script>
@@ -91,7 +120,7 @@ In this example it will be safe to empty the content of main and add a new list 
         console.log('My item ' + item);
       };
     
-      $('#main').touchscroll('.list', {
+      $('#wrapper').touchscroll('.list', {
         '.item': openItem
       });
     </script>
@@ -106,7 +135,7 @@ In this example it will be safe to empty the content of main and add a new list 
   <head>
   </head>
   <body>
-    <div id="main">
+    <div id="wrapper">
       <div class=".list"></div>
     </div>
     <script src="jquery.js"></script>
@@ -115,7 +144,7 @@ In this example it will be safe to empty the content of main and add a new list 
     <script src="backbone.js"></script>
     <script>
         var MyView = Backbone.View.extend({
-          el: '#main',
+          el: '#wrapper',
           initialize: function () {
             this.$el.touchscroll('.list', {
               '.item': this.openItem.bind(this)
@@ -145,14 +174,15 @@ Note that if you are using LESS, it will compile the calculations in the calc me
         #header {
           height: 100px;
         }
-        .list {
+        #wrapper {
           height: calc(100% - 100px);
+          overflow: hidden;
         }
     </style>
   </head>
   <body>
-    <div id="main">
-      <div id="header">Header</div>
+    <div id="header">Header</div>
+    <div id="wrapper">
       <div class=".list"></div>
     </div>
   </body>
@@ -178,14 +208,15 @@ In this example we use the css property "box-sizing: border-box" to safely still
           padding: 10px;
           box-sizing: border-box;
         }
-        .list {
+        #wrapper {
           height: calc(100% - 100px);
+          overflow: hidden;
         }
     </style>
   </head>
   <body>
-    <div id="main">
-      <div id="header">Header</div>
+    <div id="header">Header</div>
+    <div id="wrapper">
       <div class=".list"></div>
     </div>
   </body>
@@ -205,7 +236,7 @@ In this example we use the css property "box-sizing: border-box" to safely still
 }
 ```
 
-## META tags to display content correctly
+## META tags to display content correctly on mobile devices
 ```html
 <!DOCTYPE html>
 <html>
