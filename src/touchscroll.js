@@ -233,7 +233,6 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
                 //Move container
                 target.style.transform = "translate3d(0, " + y + "px, 0)";
                 target.style.webkitTransform = "translate3d(0, " + y + "px, 0)";
-                target.style.overflow = "hidden";
 
                 event[preventDefault]();
             }
@@ -266,7 +265,6 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             listTarget.style.webkitTransition = '-webkit-transform 0.35s ease-out';
             listTarget.style.transform = 'translate3d(0,0,0)';
             listTarget.style.webkitTransform = 'translate3d(0,0,0)';
-            listTarget.style.overflow = "auto";
 
 
             if (!isScrolling && !disabled && touchendTarget) {
