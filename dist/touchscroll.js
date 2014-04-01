@@ -1,5 +1,5 @@
 /* global console */
-/*! touchscroll v0.0.1 2014-03-21 12:38 */
+/*! touchscroll v0.0.1 2014-04-01 13:10 */
 
 
 if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional compilation with uglifyJS
@@ -11,22 +11,24 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
 
     // A few tricks for better minification
         preventDefault = 'preventDefault',
-        addEventListener = 'addEventListener';
+        addEventListener = 'addEventListener',
+        isWindowsPhone = navigator.msPointerEnabled;
 
+    // Handling touch events for cross devices. WP has their own touch events.
 
-    // Avoid rubber band effect in body
-    document[addEventListener]('DOMContentLoaded', function () {
-        console.log("DOMContentLoaded");
-        window[addEventListener]('touchmove', function (event) {
-            console.log("preventDefault of touchmove on body");
-            event[preventDefault]();
-        });
-    });
+    var touchstartEvent = 'touchstart',
+        touchendEvent = 'touchend',
+        touchmoveEvent = 'touchmove';
+
+    if (isWindowsPhone) {
+        touchstartEvent = 'MSPointerDown';
+        touchendEvent = 'MSPointerUp';
+        touchmoveEvent = 'MSPointerMove';
+    }
 
 
     ///////////////////////////////////////////////////////
     // PRIVATES
-
 
     var scrollTop = 0,
         touchstart = {
@@ -42,6 +44,16 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
         disabled = false; //TODO: Improve name of this flag?
 
 
+    // Avoid rubber band effect in body
+    document[addEventListener]('DOMContentLoaded', function () {
+        window[addEventListener](touchmoveEvent, function (event) {
+            event[preventDefault]();
+        });
+        window[addEventListener](touchendEvent, function () {
+            isScrolling = false;
+        });
+    });
+
     function disableTouch() {
         disabled = true;
     }
@@ -56,8 +68,8 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
         if (!el || typeof selector !== 'string') {
             return false;
         }
-        selector = selector.replace(/\s*/g, ''); // Remove whitespace before matching
-        return selector === '.' + el.className || selector === '#' + el.id;
+        selector = selector.replace(/[\s,\.]*/g, ''); // Remove whitespace and class dots before matching
+        return el.className.split(' ').indexOf(selector) >= 0 || selector === '#' + el.id;
     }
 
     function isEventTarget(el, events) {
@@ -69,6 +81,8 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
         return false;
     }
 
+    // Returns the target by selector,
+    // or undefined if no match
     function getTarget(el, selector) {
         var target = el;
         while (target.parentNode) {
@@ -86,25 +100,28 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
     function createDelegatedClosure(selector, cb) {
         return function (event) {
             var target = getTarget(event.target, selector);
-
             if (target) {
                 return cb(event, target);
             }
         };
     }
 
+    // Figures out if an inner delegated child
+    // is touched. Passed on the object to touchscroll
     function createEventsClosure(events, cb) {
-        return function (event) {
+        return function (event, listTarget) {
             var target = event.target,
                 selector;
             while (target.parentNode) {
                 selector = isEventTarget(target, events);
                 if (selector) {
-                    return cb(event, selector, target); // TODO: Fix better identifier
+                    return cb(event, selector, target, listTarget);
                 } else {
                     target = target.parentNode;
                 }
             }
+
+            cb(event, selector, target, listTarget);
         };
     }
 
@@ -160,6 +177,8 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
         touchstart = function (event, target) {
 
             target = target ? target : event.currentTarget;
+            target.style.transition = '';
+            target.style.webkitTransition = '';
             scrollTop = target.scrollTop;
             touchstart = {
                 x: event.touches[0].pageX,
@@ -178,12 +197,13 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             startCallback = touchstart;
         }
 
-        el[addEventListener]('touchstart', startCallback);
+        el[addEventListener](touchstartEvent, startCallback);
 
         // TOUCHMOVE
 
-        touchmove = function (event) {
-
+        touchmove = function (event, target) {
+//            console.log('moving');
+            target = target || event.currentTarget;
             isScrolling = true;
 
             // Prevent horizontal scroll
@@ -192,9 +212,26 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             }
 
             if (scrollTop === 0 && event.touches[0].pageY > touchstart.y) {
+
+                //Formula creating rubber band effect
+                var dist = parseInt(Math.sqrt(Math.pow((event.touches[0].pageY - touchstart.y), 2)), 10);
+                var y = (event.touches[0].pageY - touchstart.y) * (1 - (dist / 1000)) * 0.5;
+
+                //Move container
+                target.style.transform = "translate3d(0, " + y + "px, 0)";
+                target.style.webkitTransform = "translate3d(0, " + y + "px, 0)";
+
                 event[preventDefault]();
             } else if (scrollTop === (scrollContainer.scrollHeight - scrollContainer.offsetHeight) &&
                 event.touches[0].pageY < touchstart.y) {
+                //Formula creating rubber band effect
+                var dist = parseInt(Math.sqrt(Math.pow((event.touches[0].pageY - touchstart.y), 2)), 10);
+                var y = (event.touches[0].pageY - touchstart.y) * (1 - (dist / 1000)) * 0.5;
+
+                //Move container
+                target.style.transform = "translate3d(0, " + y + "px, 0)";
+                target.style.webkitTransform = "translate3d(0, " + y + "px, 0)";
+                target.style.overflow = "hidden";
 
                 event[preventDefault]();
             }
@@ -208,26 +245,32 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             moveCallback = touchmove;
         }
 
-        el[addEventListener]('touchmove', moveCallback);
-
-        if (!events) {
-            return;
-        }
-
-        touchend = function (event, touchendTarget, target) {
+        el[addEventListener](touchmoveEvent, moveCallback);
 
 
-            if (isScrolling && !reset) {
-                // To allow multiple touchend events to trigger
-                return reset = setTimeout(function () {  //TODO: JSHint is not happy about this one. Split?
-                    isScrolling = false;
-                    reset = null;
-                }, 0);
-            }
+        touchend = function (event, touchendTarget, target, listTarget) {
+
+            listTarget = listTarget || el;
+
+
+            var transitionEnd = function () {
+                listTarget.style.transition = '';
+                listTarget.style.webkitTransition = '';
+            };
+
+            listTarget[addEventListener]('transitionend', transitionEnd);
+            listTarget[addEventListener]('webkitTransitionend', transitionEnd);
+            listTarget.style.transition = 'transform 0.35s ease-out';
+            listTarget.style.webkitTransition = '-webkit-transform 0.35s ease-out';
+            listTarget.style.transform = 'translate3d(0,0,0)';
+            listTarget.style.webkitTransform = 'translate3d(0,0,0)';
+            listTarget.style.overflow = "auto";
+
 
             if (!isScrolling && !disabled && touchendTarget) {
                 events[touchendTarget](event, target);
             }
+
         };
 
         if (parentSelector) {
@@ -236,7 +279,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             endCallback = createEventsClosure(events, touchend);
         }
 
-        el[addEventListener]('touchend', endCallback);
+        el[addEventListener](touchendEvent, endCallback);
 
         return touchscroll;
 
@@ -258,6 +301,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             jQuery = jQuery || window.jQuery;
             if (jQuery) {
                 jQuery.fn.touchscroll = touchscroll;
+                jQuery = $;
             } else {
                 return touchscroll;
             }
