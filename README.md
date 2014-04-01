@@ -58,7 +58,7 @@ css:
   </head>
   <body>
     <div id="wrapper">
-      <div class="#list"></div>
+      <div class="list"></div>
     </div>
   </body>
 </html>
@@ -73,7 +73,7 @@ This will make the content of the DIV natively scrollable
   </head>
   <body>
     <div id="wrapper">
-      <div class="#list"></div> 
+      <div id="list"></div> 
     </div>
     <script src="jquery.js"></script>
     <script src="touchscroll.js"></script>
@@ -92,7 +92,8 @@ In this example it will be safe to empty the content of main and add a new list 
   </head>
   <body>
     <div id="wrapper">
-      <div class=".list"></div>
+      <!-- Using CLASS instead -->
+      <div class="list"></div>
     </div>
     <script src="jquery.js"></script>
     <script src="touchscroll.js"></script>
@@ -111,7 +112,7 @@ In this example it will be safe to empty the content of main and add a new list 
   </head>
   <body>
     <div id="wrapper">
-      <div class=".list"></div>
+      <div class="list"></div>
     </div>
     <script src="jquery.js"></script>
     <script src="touchscroll.js"></script>
@@ -136,7 +137,7 @@ In this example it will be safe to empty the content of main and add a new list 
   </head>
   <body>
     <div id="wrapper">
-      <div class=".list"></div>
+      <div class="list"></div>
     </div>
     <script src="jquery.js"></script>
     <script src="touchscroll.js"></script>
@@ -183,7 +184,7 @@ Note that if you are using LESS, it will compile the calculations in the calc me
   <body>
     <div id="header">Header</div>
     <div id="wrapper">
-      <div class=".list"></div>
+      <div class="list"></div>
     </div>
   </body>
 </html>
@@ -217,7 +218,7 @@ In this example we use the css property "box-sizing: border-box" to safely still
   <body>
     <div id="header">Header</div>
     <div id="wrapper">
-      <div class=".list"></div>
+      <div class="list"></div>
     </div>
   </body>
 </html>
