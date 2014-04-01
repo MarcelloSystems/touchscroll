@@ -160,12 +160,14 @@ if (typeof DEBUG === 'undefined') DEBUG = true;// Flag used for conditional comp
             var style = document.createElement('style');
             style.type = 'text/css';
             style.innerHTML = parentSelector + ' { ' +
+                'height: 100%;' +
                 'overflow-y: scroll;' +
                 '-webkit-overflow-scrolling: touch;' +
                 '-ms-touch-action: pan-y;' +
                 '}';
             document.getElementsByTagName('head')[0].appendChild(style);
         } else {
+            el.style.height = '100%';
             el.style.overflowY = 'scroll';
             el.style.webkitOverflowScrolling = 'touch';
             el.style.msTouchAction = 'pan-y';
